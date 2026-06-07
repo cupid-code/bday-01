@@ -1,0 +1,41 @@
+{
+  "name": "Alex",
+  "age": 25,
+  "desktopBackground": "https://lh3.googleusercontent.com/aida-public/AB6AXuAZmMbvXAukYmhOE5u7PafBzclO1GkvTW9Nznpr_axYJvaI6wrKTfCtJXOVj4iQQy6ANUae9o6Oxzp6KL6hFO6XYjf-HI4hVwWGpdXHLol5W1R0Zju5MnAN7gcXdWWwcdi7b9WLe41FA0xSvC1zUjdALvZdO4ncu4cpOTaiFqasC2Pgb_guC3Argi1Uvoy1U6jtqkdTuURzkR3BpaVvRRMCb9X-p-ltEsnS4G1U5K5eBQnBjPYBzkFhqapfi4r7f912ALSDQsU_IDZ4",
+  "greetingMessage": "The world just got a major performance update. You are the most beautiful bug-free code in my universe. Rebooting system with 100% more love...",
+  "installationSteps": [
+    "happiness.exe",
+    "cake_support.pkg",
+    "10000_hugs_driver.zip",
+    "romantic_logic_gates.sys",
+    "smile_frequency_tuner.dll",
+    "infinite_patience.patch",
+    "soulmate_protocol.exe"
+  ],
+  "bootSequence": [
+    "> BOOTING Birthday OS v2.0...",
+    "> RAM Check: 1024TB Pure Joy Found",
+    "> CPU: Romantic i9-9900K @ Heart Frequency",
+    "> GPU: Nebula Rendering Core Enabled",
+    "> Checking Heart Logic...",
+    "> Mounting Memory Disk (2024-2025)...",
+    "> Initializing Love Drivers...",
+    "> User Found: ALEX_AUTHENTICATED",
+    "> Starting GUI..."
+  ],
+  "gallery": [
+    { "id": 1, "type": "text", "content": "WARNING: Your presence causes significant system overheating. Emotional fans at 100%." },
+    { "id": 2, "type": "image", "content": "https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&q=80&w=600" },
+    { "id": 3, "type": "text", "content": "CRITICAL: Detected illegal levels of cuteness in local sector." },
+    { "id": 4, "type": "video", "content": "https://v.ftcdn.net/04/79/17/22/700_F_479172266_mG3S2nJ8jX9fO1P0u8tC8G2uGf0o0e7a_ST.mp4" },
+    { "id": 5, "type": "text", "content": "System Notice: 25 years of excellence detected. Upgrade to Legend status complete." },
+    { "id": 6, "type": "image", "content": "https://images.unsplash.com/photo-1464347601390-25e2842a37f7?auto=format&fit=crop&q=80&w=600" },
+    { "id": 7, "type": "text", "content": "Protocol 'Love_You_Always' is now a permanent kernel process." }
+  ],
+  "email": {
+    "publicKey": "",
+    "serviceId": "",
+    "templateId": "",
+    "toEmail": ""
+  }
+}

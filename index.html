@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Birthday OS v2.0</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            backdrop-filter: blur(20px);
+            background: rgba(18, 19, 22, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: inset 1px 1px 0px rgba(255, 255, 255, 0.05);
+        }
+        .neon-glow-pink {
+            box-shadow: 0 0 15px rgba(255, 113, 206, 0.4);
+        }
+        .neon-text-pink {
+            text-shadow: 0 0 8px rgba(255, 113, 206, 0.6);
+        }
+        @keyframes pulse-neon {
+            0%, 100% { opacity: 1; text-shadow: 0 0 12px rgba(255, 113, 206, 0.8); }
+            50% { opacity: 0.8; text-shadow: 0 0 4px rgba(255, 113, 206, 0.4); }
+        }
+        .animate-pulse-neon { animation: pulse-neon 2s infinite; }
+        
+        .cursor-blink::after {
+            content: '_';
+            animation: blink 1s step-start infinite;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        .window-dot { width: 12px; height: 12px; border-radius: 50%; }
+        .dot-mint { background-color: #00e38e; }
+        .dot-lilac { background-color: #dfb7ff; }
+        .dot-pink { background-color: #ffaedc; }
+
+        body { overflow: hidden; background-color: #121316; color: #e3e2e6; height: 100vh; width: 100vw; }
+        
+        .draggable { cursor: grab; }
+        .draggable:active { cursor: grabbing; }
+
+        .gallery-window {
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease, z-index 0s;
+        }
+        .gallery-window.focused {
+            position: fixed !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) scale(1.1) !important;
+            z-index: 200 !important;
+            box-shadow: 0 0 100px rgba(255, 113, 206, 0.5);
+        }
+        .gallery-backdrop {
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(8px);
+            z-index: 190;
+        }
+
+        /* Glitch Animation */
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-5px, 5px); clip-path: inset(10% 0 30% 0); }
+            40% { transform: translate(5px, -5px); clip-path: inset(40% 0 10% 0); }
+            60% { transform: translate(-5px, 0); clip-path: inset(0 0 50% 0); }
+            80% { transform: translate(5px, 5px); clip-path: inset(20% 0 20% 0); }
+            100% { transform: translate(0); }
+        }
+        .glitch-active {
+            animation: glitch 0.2s infinite;
+            filter: hue-rotate(90deg) brightness(1.5);
+        }
+
+        @media print {
+            body * { visibility: hidden; }
+            #cert-popup, #cert-popup * { visibility: visible; }
+            #cert-popup { position: absolute; left: 0; top: 0; width: 100%; }
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                "on-tertiary-fixed-variant": "#005230",
+                "inverse-primary": "#a72683",
+                "on-secondary-fixed-variant": "#6b00b0",
+                "surface-container-low": "#1a1b1e",
+                "on-primary": "#600049",
+                "outline-variant": "#54414b",
+                "on-tertiary-fixed": "#002110",
+                "surface": "#121316",
+                "on-surface-variant": "#dabfcc",
+                "surface-dim": "#121316",
+                "surface-container-high": "#292a2d",
+                "on-tertiary-container": "#004528",
+                "primary": "#ffaedc",
+                "on-error-container": "#ffdad6",
+                "secondary-container": "#6e06b3",
+                "on-surface": "#e3e2e6",
+                "surface-container": "#1f1f23",
+                "outline": "#a28a96",
+                "on-secondary": "#4b007e",
+                "primary-container": "#ff71ce",
+                "tertiary": "#00e38e",
+                "secondary": "#dfb7ff",
+                "background": "#121316",
+                "error-container": "#93000a",
+                "on-tertiary": "#003920",
+                "surface-bright": "#38393c",
+                "surface-container-lowest": "#0d0e11",
+                "on-secondary-container": "#d6a4ff",
+                "secondary-fixed-dim": "#dfb7ff",
+                "surface-container-highest": "#343538",
+                "on-secondary-fixed": "#2d004f",
+                "on-primary-container": "#730058",
+                "tertiary-container": "#00bd76",
+                "tertiary-fixed-dim": "#00e38e",
+                "surface-variant": "#343538",
+                "tertiary-fixed": "#54ffaa",
+                "on-background": "#e3e2e6",
+                "secondary-fixed": "#f1daff",
+                "surface-tint": "#ffaedc",
+                "inverse-surface": "#e3e2e6",
+                "on-error": "#690005",
+                "error": "#ffb4ab",
+                "on-primary-fixed": "#3b002c",
+                "primary-fixed-dim": "#ffaedc",
+                "inverse-on-surface": "#2f3033",
+                "on-primary-fixed-variant": "#880068",
+                "primary-fixed": "#ffd8eb"
+              },
+              "borderRadius": { "DEFAULT": "0.5rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+              "spacing": { "container-padding": "24px", "gutter": "16px", "base": "8px", "window-gap": "20px" },
+              "fontFamily": {
+                "headline-xl": ["Hanken Grotesk"],
+                "label-caps": ["JetBrains Mono"],
+                "headline-lg": ["Hanken Grotesk"],
+                "body-md": ["Hanken Grotesk"],
+                "headline-lg-mobile": ["Hanken Grotesk"],
+                "code-sm": ["JetBrains Mono"]
+              },
+              "fontSize": {
+                "headline-xl": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "600" }],
+                "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                "code-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }]
+              }
+            },
+          },
+        }
+      </script>
+</head>
+<body class="bg-background text-on-background font-body-md selection:bg-primary-container selection:text-on-primary-container">
+<!-- DESKTOP WALLPAPER -->
+<div class="fixed inset-0 z-0 bg-cover bg-center transition-opacity duration-1000 opacity-0" id="desktop-bg">
+<div class="absolute inset-0 bg-background/40 backdrop-blur-[2px]"></div>
+</div>
+<!-- 1. BOOT SCREEN -->
+<section class="fixed inset-0 z-[100] bg-surface-container-lowest flex items-center justify-center p-8 overflow-hidden" id="boot-screen">
+<div class="w-full max-w-2xl font-label-caps text-tertiary">
+<div class="space-y-1 text-code-sm font-code-sm" id="boot-logs"></div>
+</div>
+</section>
+<!-- 2. INSTALLATION WIZARD -->
+<section class="fixed inset-0 z-[90] flex items-center justify-center p-6 hidden" id="install-screen">
+<div class="glass-panel w-full max-w-lg rounded-xl overflow-hidden animate-in fade-in zoom-in duration-500 draggable shadow-2xl">
+<!-- Window Title Bar -->
+<div class="flex justify-between items-center px-4 py-3 bg-white/5 border-b border-white/10">
+<div class="flex gap-2">
+<div class="window-dot dot-pink"></div>
+<div class="window-dot dot-lilac"></div>
+<div class="window-dot dot-mint"></div>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Setup.exe</span>
+<div class="w-12"></div>
+</div>
+<!-- Window Content -->
+<div class="p-8 space-y-6">
+<div class="text-center">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-2 neon-text-pink">Birthday OS v2.0</h2>
+<p class="text-on-surface-variant font-body-md" id="install-status">Initializing installation...</p>
+</div>
+<!-- Progress Bar -->
+<div class="relative h-2 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="absolute top-0 left-0 h-full w-0 bg-gradient-to-r from-primary to-secondary neon-glow-pink transition-all duration-300" id="install-progress"></div>
+</div>
+<div class="h-6 text-tertiary font-code-sm text-code-sm text-center" id="install-step-text"></div>
+</div>
+</div>
+</section>
+<!-- 2.5 GALLERY PHASE (Cascade) -->
+<section class="fixed inset-0 z-[150] pointer-events-none hidden" id="gallery-phase">
+<div class="absolute inset-0 gallery-backdrop opacity-0 transition-opacity duration-500 pointer-events-auto hidden" id="gallery-overlay"></div>
+<div class="relative w-full h-full" id="gallery-container"></div>
+</section>
+<!-- 2.75 BIG GREETING (Post-Overload) -->
+<section class="fixed inset-0 z-[300] bg-black flex flex-col items-center justify-center p-10 text-center hidden" id="greeting-screen">
+<div class="space-y-4 animate-in zoom-in duration-700">
+<h2 class="font-label-caps text-primary text-2xl tracking-[0.4em] mb-4">SYSTEM_RESTORE_COMPLETE</h2>
+<h1 class="font-headline-xl text-[80px] md:text-[120px] text-primary leading-none neon-text-pink uppercase italic font-black">Happy Birthday</h1>
+<div class="flex items-center justify-center gap-8 py-8">
+<span class="font-headline-xl text-white text-6xl" id="greet-name">ALEX</span>
+<div class="h-16 w-[2px] bg-tertiary"></div>
+<div class="text-left">
+<p class="font-label-caps text-tertiary text-xl">VERSION_UPGRADE</p>
+<p class="font-headline-lg text-white text-4xl" id="greet-age">25.0</p>
+</div>
+</div>
+<div class="pt-10">
+<p class="text-on-surface-variant font-body-md max-w-xl mx-auto opacity-70">The world just got a major performance update. You are the most beautiful bug-free code in my universe. Rebooting system with 100% more love...</p>
+</div>
+</div>
+</section>
+<!-- 3. MAIN DESKTOP INTERFACE -->
+<main class="relative z-10 h-screen w-full hidden overflow-hidden" id="desktop">
+<!-- TaskBar -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-white/10 flex justify-between items-center px-6 py-2 shadow-[0_0_15px_rgba(255,113,206,0.2)]">
+<div class="flex items-center gap-6">
+<div class="font-headline-lg-mobile text-headline-lg-mobile text-primary drop-shadow-[0_0_8px_rgba(255,113,206,0.4)] cursor-pointer active:scale-95 transition-all" onclick="showPopup('welcome-popup')">
+                Birthday OS
+            </div>
+</div>
+<div class="flex items-center gap-4 text-on-surface-variant font-label-caps text-label-caps">
+<span class="material-symbols-outlined cursor-pointer hover:text-primary transition-all" id="audio-toggle" onclick="toggleAudio()">volume_up</span>
+<span class="material-symbols-outlined">wifi</span>
+<span class="material-symbols-outlined">battery_charging_full</span>
+<span class="ml-2 font-bold text-primary" id="system-clock">00:00:00</span>
+</div>
+</header>
+<!-- Desktop Grid Content (Empty as requested) -->
+<div class="pt-24 px-10 grid grid-cols-2 md:grid-cols-6 lg:grid-cols-12 gap-window-gap h-[calc(100vh-80px)] content-start">
+</div>
+<!-- POPUPS -->
+<!-- Welcome Popup (Unlimited Hugs) -->
+<div class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm hidden" id="welcome-popup">
+<div class="glass-panel w-full max-w-md rounded-xl overflow-hidden shadow-2xl animate-in zoom-in duration-300">
+<div class="flex justify-between items-center px-4 py-2 bg-primary/20 border-b border-primary/20">
+<span class="font-label-caps text-label-caps text-primary">CRITICAL_SYSTEM_ALERT</span>
+<span class="material-symbols-outlined text-sm cursor-pointer hover:text-white" onclick="closePopup('welcome-popup')">close</span>
+</div>
+<div class="p-8 text-center space-y-6">
+<div class="w-24 h-24 bg-primary-container/20 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse-neon">
+<span class="material-symbols-outlined text-primary-container text-5xl" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</div>
+<div class="space-y-2">
+<h3 class="font-headline-lg text-headline-lg text-on-surface">Unlimited Hugs Required?</h3>
+<p class="text-on-surface-variant font-body-md">System detected a severe deficiency in physical affection. Deployment of hug.pkg is recommended immediately.</p>
+</div>
+<div class="flex gap-4 pt-4">
+<button class="flex-1 py-3 px-6 bg-primary-container text-on-primary-container font-label-caps text-label-caps rounded-lg hover:brightness-110 active:scale-95 transition-all neon-glow-pink" onclick="acceptHugs()">Confirm Hugs</button>
+<button class="flex-1 py-3 px-6 border border-primary text-primary font-label-caps text-label-caps rounded-lg hover:bg-primary/10 active:scale-95 transition-all" onclick="acceptHugs()">Confirm Anyway</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Memory Overflow Alert -->
+<div class="fixed inset-0 z-[65] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm hidden" id="memory-alert">
+<div class="glass-panel w-full max-w-sm rounded-xl overflow-hidden shadow-2xl border-tertiary/30 animate-in fade-in slide-in-from-bottom-4">
+<div class="flex justify-between items-center px-4 py-2 bg-tertiary/20">
+<span class="font-label-caps text-label-caps text-tertiary">STORAGE_WARNING</span>
+<span class="material-symbols-outlined text-sm cursor-pointer" onclick="closePopup('memory-alert')">close</span>
+</div>
+<div class="p-6 space-y-4">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-tertiary text-4xl">warning</span>
+<div>
+<p class="font-bold text-on-surface">Disk Space Low!</p>
+<p class="text-sm text-on-surface-variant">Memory drive is currently 99.9% full of happy moments shared together.</p>
+</div>
+</div>
+<button class="w-full py-2 bg-tertiary-container text-on-tertiary-container rounded font-label-caps text-label-caps hover:brightness-110" onclick="closePopup('memory-alert')">Expand Storage with Love</button>
+</div>
+</div>
+</div>
+<!-- Certificate Window -->
+<div class="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md hidden" id="cert-popup">
+<div class="glass-panel w-full max-w-3xl rounded-xl overflow-hidden shadow-[0_0_50px_rgba(255,113,206,0.3)] animate-in zoom-in duration-500">
+<div class="flex justify-between items-center px-4 py-2 bg-surface-container-high border-b border-white/5">
+<div class="flex gap-2">
+<div class="window-dot dot-pink"></div>
+<div class="window-dot dot-lilac"></div>
+<div class="window-dot dot-mint"></div>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Viewer.exe - Achievement_Unlocked.pdf</span>
+<span class="material-symbols-outlined text-sm cursor-pointer hover:text-white" onclick="closePopup('cert-popup')">close</span>
+</div>
+<div class="bg-white m-8 p-12 text-surface text-center space-y-8 relative overflow-hidden shadow-inner border-[12px] border-double border-primary/20">
+<div class="space-y-4">
+<span class="font-label-caps text-label-caps tracking-[0.3em] text-primary-container">OFFICIAL RECOGNITION</span>
+<h1 class="font-headline-xl text-[56px] text-surface font-bold leading-tight">Certified Legend</h1>
+</div>
+<div class="py-8 border-y border-surface-container/20">
+<p class="font-body-md text-surface/70 italic text-lg mb-2">This highest honor is bestowed upon</p>
+<p class="font-headline-xl text-headline-xl text-primary-container my-4 underline decoration-wavy decoration-primary/40 underline-offset-8" id="cert-name">ALEX</p>
+<p class="font-body-md text-surface max-w-lg mx-auto text-lg leading-relaxed">For achieving <span class="font-bold text-2xl px-1" id="cert-age">25</span> orbits around the sun with unmatched grace, infinite kindness, and being the core processor of my happiness system.</p>
+</div>
+<div class="flex justify-between items-end px-8 pt-8">
+<div class="text-left">
+<div class="font-code-sm italic text-surface/50 mb-1">Authenticated by:</div>
+<div class="font-label-caps border-t border-surface/20 pt-2 text-surface">Birthday OS Core 2.0</div>
+</div>
+<div class="w-32 h-32 rounded-full border-4 border-primary/30 flex items-center justify-center transform rotate-12 bg-primary/5">
+<span class="text-primary font-bold text-center leading-tight tracking-tighter text-xs">OFFICIAL<br/>HAPPINESS<br/>SEAL</span>
+</div>
+</div>
+<!-- Decorative elements for certificate -->
+<div class="absolute top-0 right-0 w-20 h-20 bg-primary/10 rounded-bl-full"></div>
+<div class="absolute bottom-0 left-0 w-20 h-20 bg-secondary/10 rounded-tr-full"></div>
+</div>
+<div class="px-8 pb-8 flex justify-end gap-4">
+<button class="flex items-center gap-2 py-3 px-6 border border-white/10 text-on-surface font-label-caps text-label-caps rounded-lg hover:bg-white/5 transition-all" onclick="closePopup('cert-popup')">Dismiss</button>
+<button class="flex items-center gap-2 py-3 px-8 bg-tertiary-container text-on-tertiary-container font-label-caps text-label-caps rounded-lg hover:brightness-110 shadow-lg" onclick="window.print()">
+<span class="material-symbols-outlined text-sm">print</span> Print Recognition
+                </button>
+</div>
+</div>
+</div>
+</main>
+<script>
+    // 1. CENTRALIZED DATA SOURCE (loaded from config.json with inline fallback)
+    let CONFIG = {
+        name: "Alex",
+        age: 25,
+        installationSteps: [
+            "happiness.exe",
+            "cake_support.pkg",
+            "10000_hugs_driver.zip",
+            "romantic_logic_gates.sys",
+            "smile_frequency_tuner.dll",
+            "infinite_patience.patch",
+            "soulmate_protocol.exe"
+        ],
+        bootSequence: [
+            "> BOOTING Birthday OS v2.0...",
+            "> RAM Check: 1024TB Pure Joy Found",
+            "> CPU: Romantic i9-9900K @ Heart Frequency",
+            "> GPU: Nebula Rendering Core Enabled",
+            "> Checking Heart Logic...",
+            "> Mounting Memory Disk (2024-2025)...",
+            "> Initializing Love Drivers...",
+            "> User Found: ALEX_AUTHENTICATED",
+            "> Starting GUI..."
+        ],
+        gallery: [
+            { id: 1, type: 'text', content: "WARNING: Your presence causes significant system overheating. Emotional fans at 100%." },
+            { id: 2, type: 'image', content: "https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&q=80&w=600" },
+            { id: 3, type: 'text', content: "CRITICAL: Detected illegal levels of cuteness in local sector." },
+            { id: 4, type: 'video', content: "https://v.ftcdn.net/04/79/17/22/700_F_479172266_mG3S2nJ8jX9fO1P0u8tC8G2uGf0o0e7a_ST.mp4" },
+            { id: 5, type: 'text', content: "System Notice: 25 years of excellence detected. Upgrade to Legend status complete." },
+            { id: 6, type: 'image', content: "https://images.unsplash.com/photo-1464347601390-25e2842a37f7?auto=format&fit=crop&q=80&w=600" },
+            { id: 7, type: 'text', content: "Protocol 'Love_You_Always' is now a permanent kernel process." }
+        ],
+        email: { publicKey: "", serviceId: "", templateId: "", toEmail: "" }
+    };
+
+    async function loadConfig() {
+        try {
+            const response = await fetch('config.json');
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const data = await response.json();
+            CONFIG = { ...CONFIG, ...data };
+        } catch (e) {
+            console.warn('Could not load config.json, using inline defaults:', e.message);
+        }
+    }
+
+    // UI ELEMENTS
+    const bootScreen = document.getElementById('boot-screen');
+    const installScreen = document.getElementById('install-screen');
+    const desktop = document.getElementById('desktop');
+    const bootLogs = document.getElementById('boot-logs');
+    const installProgress = document.getElementById('install-progress');
+    const installStepText = document.getElementById('install-step-text');
+    const welcomePopup = document.getElementById('welcome-popup');
+    const desktopBg = document.getElementById('desktop-bg');
+    const galleryPhase = document.getElementById('gallery-phase');
+    const galleryContainer = document.getElementById('gallery-container');
+    const galleryOverlay = document.getElementById('gallery-overlay');
+    const greetingScreen = document.getElementById('greeting-screen');
+
+    // 2. BOOT SEQUENCE
+    async function runBootSequence() {
+        for (const line of CONFIG.bootSequence) {
+            const p = document.createElement('p');
+            p.className = 'cursor-blink';
+            bootLogs.appendChild(p);
+            await typeText(p, line, 40);
+            p.classList.remove('cursor-blink');
+            await new Promise(r => setTimeout(r, 150));
+        }
+
+        setTimeout(() => {
+            bootScreen.classList.add('hidden');
+            installScreen.classList.remove('hidden');
+            runInstallation();
+        }, 600);
+    }
+
+    // 3. INSTALLATION WIZARD
+    async function runInstallation() {
+        let progress = 0;
+        const totalSteps = CONFIG.installationSteps.length;
+
+        for (let i = 0; i < totalSteps; i++) {
+            const stepName = CONFIG.installationSteps[i];
+            installStepText.innerText = `Installing ${stepName}...`;
+            await new Promise(r => setTimeout(r, 600));
+            progress = ((i + 1) / totalSteps) * 100;
+            installProgress.style.width = progress + '%';
+        }
+
+        document.getElementById('install-status').innerText = 'System Optimized. Launching...';
+        setTimeout(() => {
+            installScreen.classList.add('hidden');
+            showDesktop();
+        }, 1200);
+    }
+
+    // 4. DESKTOP ENVIRONMENT
+    function showDesktop() {
+        desktop.classList.remove('hidden');
+        
+        // Apply background from config
+        if (CONFIG.desktopBackground) {
+            desktopBg.style.backgroundImage = `url('${CONFIG.desktopBackground}')`;
+        }
+        desktopBg.classList.replace('opacity-0', 'opacity-100');
+        
+        document.getElementById('cert-name').innerText = CONFIG.name.toUpperCase();
+        document.getElementById('cert-age').innerText = CONFIG.age;
+
+        // Apply greeting message if configured
+        if (CONFIG.greetingMessage) {
+            const greetMsgEl = greetingScreen.querySelector('.text-on-surface-variant');
+            if (greetMsgEl) greetMsgEl.innerText = CONFIG.greetingMessage;
+        }
+
+        setTimeout(() => {
+            showPopup('welcome-popup');
+        }, 1000);
+
+        startClock();
+    }
+
+    function acceptHugs() {
+        closePopup('welcome-popup');
+        createConfetti();
+        setTimeout(startGalleryCascade, 800);
+    }
+
+    // 5. GALLERY CASCADE LOGIC
+    function startGalleryCascade() {
+        galleryPhase.classList.remove('hidden');
+        galleryContainer.innerHTML = '';
+        
+        CONFIG.gallery.forEach((item, index) => {
+            setTimeout(() => {
+                createGalleryWindow(item);
+            }, index * 400); 
+        });
+    }
+
+    function createGalleryWindow(item) {
+        const win = document.createElement('div');
+        win.className = 'gallery-window glass-panel absolute pointer-events-auto rounded-lg overflow-hidden border border-primary/30 shadow-xl opacity-0 scale-90 w-72 md:w-80 cursor-pointer transition-all duration-300';
+        win.id = `gallery-item-${item.id}`;
+        
+        const padding = 100;
+        const left = padding + Math.random() * (window.innerWidth - padding * 2 - 320);
+        const top = padding + Math.random() * (window.innerHeight - padding * 2 - 300);
+        win.style.left = `${left}px`;
+        win.style.top = `${top}px`;
+        win.style.zIndex = 150 + item.id;
+
+        let contentHtml = '';
+        if (item.type === 'video') {
+            contentHtml = `<video src="${item.content}" class="w-full h-48 object-cover border-b border-white/10" autoplay loop muted playsinline></video>`;
+        } else if (item.type === 'image') {
+            contentHtml = `<img src="${item.content}" class="w-full h-48 object-cover border-b border-white/10" alt="Memory">`;
+        } else {
+            contentHtml = `<div class="p-6 font-body-md text-on-surface italic text-center leading-relaxed">"${item.content}"</div>`;
+        }
+
+        win.innerHTML = `
+            <div class="flex justify-between items-center px-3 py-1.5 bg-primary/10 border-b border-white/5">
+                <div class="flex gap-1.5">
+                    <div class="window-dot w-2.5 h-2.5 dot-pink"></div>
+                    <div class="window-dot w-2.5 h-2.5 dot-lilac"></div>
+                </div>
+                <span class="font-label-caps text-[10px] text-primary/70">${item.type.toUpperCase()}_LOG.sys</span>
+                <span class="material-symbols-outlined text-xs text-primary/50 cursor-pointer hover:text-white" onclick="markAsRead(event, ${item.id})">close</span>
+            </div>
+            <div class="bg-surface-container/30">
+                ${contentHtml}
+            </div>
+        `;
+
+        win.onclick = (e) => {
+            if (win.classList.contains('focused')) {
+                markAsRead(e, item.id);
+            } else {
+                focusGalleryWindow(win);
+            }
+        };
+        galleryContainer.appendChild(win);
+
+        requestAnimationFrame(() => {
+            win.style.opacity = '1';
+            win.style.transform = 'scale(1)';
+        });
+    }
+
+    function focusGalleryWindow(el) {
+        document.querySelectorAll('.gallery-window').forEach(w => w.classList.remove('focused'));
+        el.classList.add('focused');
+        galleryOverlay.classList.remove('hidden');
+        requestAnimationFrame(() => galleryOverlay.classList.replace('opacity-0', 'opacity-100'));
+    }
+
+    function markAsRead(event, id) {
+        if (event) event.stopPropagation();
+        const win = document.getElementById(`gallery-item-${id}`);
+        if (!win) return;
+        
+        win.style.transform = 'scale(0.8) translate(-50%, -50%)';
+        win.style.opacity = '0';
+        
+        setTimeout(() => {
+            win.remove();
+            if (!document.querySelector('.focused')) {
+                galleryOverlay.classList.replace('opacity-100', 'opacity-0');
+                setTimeout(() => galleryOverlay.classList.add('hidden'), 500);
+            }
+            
+            if (galleryContainer.children.length === 0) {
+                triggerSystemOverload();
+            }
+        }, 300);
+    }
+
+    function triggerSystemOverload() {
+        document.body.classList.add('glitch-active');
+        
+        let flashCount = 0;
+        const flashInterval = setInterval(() => {
+            document.body.style.backgroundColor = flashCount % 2 === 0 ? '#ff71ce' : '#121316';
+            flashCount++;
+            if (flashCount > 10) {
+                clearInterval(flashInterval);
+                document.body.style.backgroundColor = '#121316';
+                document.body.classList.remove('glitch-active');
+                displayBigGreeting();
+            }
+        }, 100);
+    }
+
+    function displayBigGreeting() {
+        galleryPhase.classList.add('hidden');
+        desktop.classList.add('hidden');
+        
+        document.getElementById('greet-name').innerText = CONFIG.name.toUpperCase();
+        document.getElementById('greet-age').innerText = (CONFIG.age).toFixed(1);
+        
+        greetingScreen.classList.remove('hidden');
+        
+        setTimeout(() => {
+            location.reload();
+        }, 10000);
+    }
+
+    // HELPERS
+    function typeText(element, text, speed) {
+        return new Promise(resolve => {
+            let i = 0;
+            function type() {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                } else {
+                    resolve();
+                }
+            }
+            type();
+        });
+    }
+
+    function startClock() {
+        setInterval(() => {
+            const now = new Date();
+            const clock = document.getElementById('system-clock');
+            if(clock) clock.innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+        }, 1000);
+    }
+
+    function showPopup(id) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.classList.remove('hidden');
+        el.style.zIndex = '100';
+    }
+
+    function closePopup(id) {
+        const el = document.getElementById(id);
+        if(el) el.classList.add('hidden');
+    }
+
+    function createConfetti() {
+        for(let i=0; i<60; i++) {
+            const c = document.createElement('div');
+            c.className = 'fixed z-[200] w-2 h-2 rounded-full pointer-events-none';
+            c.style.left = Math.random() * 100 + 'vw';
+            c.style.top = '-10px';
+            c.style.backgroundColor = ['#ffaedc', '#dfb7ff', '#00e38e', '#ff71ce'][Math.floor(Math.random()*4)];
+            document.body.appendChild(c);
+            
+            const anim = c.animate([
+                { transform: `translateY(0) rotate(0deg)`, opacity: 1 },
+                { transform: `translateY(110vh) rotate(${Math.random()*720}deg)`, opacity: 0 }
+            ], {
+                duration: 2500 + Math.random()*3000,
+                easing: 'cubic-bezier(.17,.67,.83,.67)'
+            });
+            anim.onfinish = () => c.remove();
+        }
+    }
+
+    let audioEnabled = true;
+    function toggleAudio() {
+        const icon = document.getElementById('audio-toggle');
+        audioEnabled = !audioEnabled;
+        icon.innerText = audioEnabled ? 'volume_up' : 'volume_off';
+        icon.classList.toggle('text-primary', audioEnabled);
+    }
+
+    // Draggable logic
+    let isDragging = false;
+    let initialX, initialY, xOffset = 0, yOffset = 0;
+    
+    document.addEventListener("mousedown", dragStart);
+    document.addEventListener("mousemove", drag);
+    document.addEventListener("mouseup", dragEnd);
+
+    function dragStart(e) {
+        if (e.target.closest('.draggable')) {
+            isDragging = true;
+            initialX = e.clientX - xOffset;
+            initialY = e.clientY - yOffset;
+        }
+    }
+    function drag(e) {
+        if (isDragging) {
+            e.preventDefault();
+            const currentX = e.clientX - initialX;
+            const currentY = e.clientY - initialY;
+            xOffset = currentX;
+            yOffset = currentY;
+            const el = document.querySelector('.draggable:not(.hidden)');
+            if(el) el.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
+        }
+    }
+    function dragEnd(e) {
+        isDragging = false;
+    }
+
+    window.onload = () => {
+        loadConfig().then(() => runBootSequence());
+    };
+</script>
+</body></html>
